@@ -12,10 +12,16 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors());
+
+// Configure CORS and place it before your routes
+const corsOptions = { 
+  origin: 'http://localhost:5173', // Replace with your frontend\'s URL
+  credentials: true, // Allow cookies and credentials
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
-// Routes
 app.use('/api/auth', require('./routes/authRoutes')); // This already handles /api/auth/signup
 app.use('/api/cart', require('./routes/cartRoutes'));
 app.use('/api/wishlist', require('./routes/wishlistRoutes'));
@@ -76,9 +82,5 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something broke!' });
 });
 
-app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your frontend's URL
-  credentials: true, // Allow cookies and credentials
-}));
-
 module.exports = app;
+

@@ -1,12 +1,6 @@
 const mongoose = require('mongoose');
 
 const wishlistSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: [true, 'User ID is required'],
-    index: true  // Improves query performance
-  },
   productId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
@@ -24,15 +18,7 @@ const wishlistSchema = new mongoose.Schema({
   toObject: { virtuals: true }
 });
 
-// Prevent duplicate wishlist items
-wishlistSchema.index({ userId: 1, productId: 1 }, { unique: true });
-
-// Virtual population (if you need to access wishlist items from user)
-wishlistSchema.virtual('product', {
-  ref: 'Product',
-  localField: 'productId',
-  foreignField: '_id',
-  justOne: true
-});
+// Prevent duplicate wishlist items (only based on productId now)
+wishlistSchema.index({ productId: 1 }, { unique: true });
 
 module.exports = mongoose.model('Wishlist', wishlistSchema);

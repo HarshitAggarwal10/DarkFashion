@@ -8,7 +8,7 @@ const API = axios.create({
 
 export const addToWishlist = async (productId) => {
   try {
-    const response = await API.post('/wishlist', { productId }); // Ensure productId is sent correctly
+    const response = await API.post('/wishlist', { productId }); // Ensure productId and userId are sent correctly
     return response.data;
   } catch (err) {
     console.error('Error adding to wishlist:', err);
@@ -18,7 +18,7 @@ export const addToWishlist = async (productId) => {
 
 export const removeFromWishlist = async (productId) => {
   try {
-    const response = await API.delete(`/wishlist/${productId}`);
+    const response = await API.post('/wishlist/remove', { productId });
     return response.data;
   } catch (error) {
     console.error('Error removing from wishlist:', error);
@@ -28,7 +28,7 @@ export const removeFromWishlist = async (productId) => {
 
 export const getWishlist = async () => {
   try {
-    const response = await API.get('/wishlist');
+    const response = await API.post('/wishlist/get', {});
     return response.data;
   } catch (error) {
     console.error('Error fetching wishlist:', error);
@@ -36,13 +36,28 @@ export const getWishlist = async () => {
   }
 };
 
-// Cart API calls
-export const addToCart = async (productId, quantity) => {
+export const addToCart = async (productId, quantity = 1) => {
   try {
-    const response = await API.post('/cart', { productId, quantity });
+    const token = localStorage.getItem('token'); // Get token from storage
+    if (!token) throw new Error('No authentication token found');
+
+    const response = await axios.post(`${API_URL}/cart`, {
+      productId,
+      quantity
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
     return response.data;
   } catch (error) {
-    console.error('Error adding to cart:', error);
+    console.error('Error details:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
     throw new Error(error.response?.data?.message || 'Failed to add to cart');
   }
 };

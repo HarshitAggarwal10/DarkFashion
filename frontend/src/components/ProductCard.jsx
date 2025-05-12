@@ -1,11 +1,13 @@
 import useProductActions from '../services/useProductActions';
 
 export default function ProductCard({ product }) {
-  const { 
-    isInWishlist, 
-    handleWishlist, 
-    handleAddToCart, 
-    loadingStates 
+  const {
+    // ... existing wishlist imports
+    handleAddToCart,
+    isInCart, // If you need to check if an item is in the cart for styling or logic
+    getCartItemQuantity, // If you need to display the quantity in the cart
+    cart, // If you need access to the full cart state
+    loadingStates
   } = useProductActions();
 
   return (
@@ -31,14 +33,13 @@ export default function ProductCard({ product }) {
         <button
           onClick={() => handleWishlist(product)}
           disabled={loadingStates[product._id]}
-          className={`py-2 px-4 rounded-md text-white disabled:opacity-50 ${
-            isInWishlist(product._id) ? 'bg-red-500' : 'bg-gray-500'
-          }`}
+          className={`py-2 px-4 rounded-md text-white disabled:opacity-50 ${isInWishlist(product._id) ? 'bg-red-500' : 'bg-gray-500'
+            }`}
         >
-          {loadingStates[product._id] 
-            ? 'Processing...' 
-            : isInWishlist(product._id) 
-              ? 'Remove from Wishlist' 
+          {loadingStates[product._id]
+            ? 'Processing...'
+            : isInWishlist(product._id)
+              ? 'Remove from Wishlist'
               : 'Add to Wishlist'}
         </button>
       </div>

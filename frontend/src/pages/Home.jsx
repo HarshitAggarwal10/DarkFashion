@@ -9,7 +9,7 @@ import Newsletter from '../components/Newsletter';
 export default function Home() {
   const featuredProducts = [
     {
-      _id: "65a1b2c3d4e5f67890123456",
+      _id: "prod1",
       name: "Minimalist Space Tee",
       price: 45,
       image: "src/img/products/f1.jpg",

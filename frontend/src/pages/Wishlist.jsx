@@ -1,22 +1,54 @@
-import React from 'react';
-import useProductActions from '../services/useProductActions';
-import ProductCard from '../components/ProductCard'; // assuming you already have this
+import React, { useEffect, useState } from 'react';
+import { getWishlist } from '../services/api'; // Assuming api.js is in '../services'
 
-export default function Wishlist() {
-  const { wishlistItems } = useProductActions();
+const Wishlist = () => {
+  const [wishlistItems, setWishlistItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      try {
+        const data = await getWishlist();
+        setWishlistItems(data); // Assuming the API returns an array of wishlist items
+        setLoading(false);
+      } catch (err) {
+        setError(err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchWishlist();
+  }, []); // Empty dependency array to fetch data only once on mount
+
+  if (loading) {
+    return <p>Loading wishlist...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-4">Your Wishlist</h2>
+    <div className="wishlist-container">
+      <h2>My Wishlist</h2>
       {wishlistItems.length === 0 ? (
-        <p className="text-gray-600">Your wishlist is empty.</p>
+        <p>Your wishlist is empty.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {wishlistItems.map(product => (
-            <ProductCard key={product._id} product={product} />
+        <div className="wishlist-items">
+          {wishlistItems.map(item => (
+            <div key={item._id} className="wishlist-item">
+              {/* Display wishlist item details (e.g., image, name, price) */}
+              <img src={item.image} alt={item.name} width="50" />
+              <p>{item.name}</p>
+              <p>${item.price}</p>
+              {/* Add remove from wishlist button */}
+            </div>
           ))}
         </div>
       )}
     </div>
   );
-}
+};
+
+export default Wishlist;
